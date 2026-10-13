@@ -1822,7 +1822,8 @@ input:checked + .switch-slider:before {
 
   #langToggleBtn,
   #resetBtn,
-  #copyCssBtn {
+  #copyCssBtn,
+  #copySecretLinkBtn {
     display: none !important;
   }
 
@@ -1885,3 +1886,150 @@ input:checked + .switch-slider:before {
     padding: 14px 12px;
   }
 }
+
+/* ==========================================================================
+   Access Protection System (Option 2: Secret Key & URL Token)
+   ========================================================================== */
+html.access-locked body {
+  overflow: hidden !important;
+}
+
+html.access-locked .app-layout {
+  display: none !important;
+}
+
+#accessDeniedScreen {
+  display: none;
+}
+
+html.access-locked #accessDeniedScreen {
+  display: flex !important;
+}
+
+.access-denied-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: radial-gradient(circle at 50% 35%, #181c2b 0%, #0c0e14 100%);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-family: var(--font-khmer, 'Kantumruy Pro', -apple-system, BlinkMacSystemFont, sans-serif);
+}
+
+.access-denied-card {
+  max-width: 440px;
+  width: 100%;
+  background: rgba(22, 27, 41, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), 0 0 40px rgba(99, 102, 241, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 36px 28px;
+  text-align: center;
+  animation: accessCardPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes accessCardPop {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.access-shield-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.22) 0%, rgba(239, 68, 68, 0.05) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #f87171;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 24px rgba(239, 68, 68, 0.25);
+}
+
+.access-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.access-subtitle {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 14px;
+}
+
+.access-desc {
+  font-size: 0.88rem;
+  color: #cbd5e1;
+  line-height: 1.65;
+  margin: 0 auto 24px;
+  max-width: 380px;
+}
+
+.access-key-form {
+  margin-bottom: 24px;
+}
+
+.access-input-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.access-input {
+  flex: 1;
+  background: rgba(13, 16, 26, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: #f8fafc;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.access-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.access-btn {
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  border-radius: 10px;
+}
+
+.access-error {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 8px;
+  padding: 6px 12px;
+  display: inline-block;
+}
+
+.access-footer {
+  font-size: 0.75rem;
+  color: #64748b;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 16px;
+}
+

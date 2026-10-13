@@ -12,8 +12,55 @@
   <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Bebas+Neue&family=Cinzel:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Kantumruy+Pro:ital,wght@0,300..700;1,300..700&family=Koulen&family=Montserrat:wght@400;600;700;800&family=Moul&family=Playfair+Display:wght@600;700&family=Siemreap&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="styles.css">
+  
+  <!-- Instant Access Authorization Pre-Check (Option 2: Secret Key Protection) -->
+  <script>
+    (function() {
+      const validKeys = ['vnt2026', 'vnt2026vip', 'frame2026'];
+      const params = new URLSearchParams(window.location.search);
+      const urlKey = params.get('access') || params.get('key') || params.get('token');
+      const isGranted = localStorage.getItem('artframe_access_granted') === 'true';
+      const grantTime = parseInt(localStorage.getItem('artframe_access_time') || '0', 10);
+      const isValid = (urlKey && validKeys.includes(urlKey.trim())) || 
+                      (isGranted && (Date.now() - grantTime < 30 * 24 * 60 * 60 * 1000));
+      if (!isValid) {
+        document.documentElement.classList.add('access-locked');
+      }
+    })();
+  </script>
 </head>
 <body class="theme-dark lang-km">
+
+  <!-- Access Denied Screen (Shown when unauthorized / no valid secret key) -->
+  <div id="accessDeniedScreen" class="access-denied-screen">
+    <div class="access-denied-card">
+      <div class="access-shield-icon">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h2 class="access-title">ការចូលប្រើប្រាស់ត្រូវបានរារាំង</h2>
+      <p class="access-subtitle">Access Denied — Private Application</p>
+      <p class="access-desc">
+        គេហទំព័រនេះត្រូវបានកំណត់ជាឯកជន។ លោកអ្នកត្រូវការតំណភ្ជាប់អនុញ្ញាតផ្លូវការ (Authorized Secret Link) ដើម្បីចូលប្រើប្រាស់កម្មវិធីនេះ។
+      </p>
+
+      <!-- Manual Access Key Input as backup -->
+      <div class="access-key-form">
+        <div class="access-input-wrap">
+          <input type="password" id="manualKeyInput" placeholder="បញ្ចូល Access Key សម្ងាត់..." class="access-input">
+          <button id="submitKeyBtn" class="btn btn-primary access-btn">ចូលប្រើ</button>
+        </div>
+        <p id="accessErrorMsg" class="access-error hidden">Access Key មិនត្រឹមត្រូវទេ!</p>
+      </div>
+
+      <div class="access-footer">
+        <span>ArtFrame Studio — Private Access System</span>
+      </div>
+    </div>
+  </div>
+
   <!-- App Container -->
   <div class="app-layout">
     
@@ -66,6 +113,13 @@
             <path d="M3 3v5h5"/>
           </svg>
           <span id="i18nReset">កំណត់ឡើងវិញ</span>
+        </button>
+        <button id="copySecretLinkBtn" class="btn btn-ghost" title="ចម្លងតំណភ្ជាប់សម្ងាត់ (Copy Secret Link)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span id="i18nSecretLink">Link សម្ងាត់</span>
         </button>
         <button id="copyCssBtn" class="btn btn-secondary" title="មើល និងចម្លងកូដ CSS">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

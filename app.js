@@ -66,6 +66,10 @@ const I18N = {
     cssModalTitle: 'កូដ CSS នៃស៊ុមរូបថត',
     cssModalDesc: 'ចម្លងកូដ CSS នេះដើម្បីយកទៅប្រើប្រាស់ក្នុងគេហទំព័រ ឬកម្មវិធីរបស់អ្នក៖',
     copyCss: 'ចម្លងកូដ CSS',
+    secretLink: 'Link សម្ងាត់',
+    secretLinkCopied: 'បានចម្លង Link សម្ងាត់ (?access=vnt2026) រួចរាល់!',
+    accessSuccess: 'បានផ្ទៀងផ្ទាត់ជោគជ័យ! សូមស្វាគមន៍',
+    accessWrong: 'Access Key មិនត្រឹមត្រូវទេ! សូមពិនិត្យឡើងវិញ',
     done: 'រួចរាល់',
     cancel: 'បោះបង់'
   },
@@ -130,6 +134,10 @@ const I18N = {
     cssModalTitle: 'Generated CSS & Frame Styles',
     cssModalDesc: 'Copy this CSS snippet to implement this realistic frame in your own website:',
     copyCss: 'Copy CSS',
+    secretLink: 'Secret Link',
+    secretLinkCopied: 'Secret link (?access=vnt2026) copied to clipboard!',
+    accessSuccess: 'Access granted! Welcome.',
+    accessWrong: 'Invalid Access Key! Please check and try again.',
     done: 'Done',
     cancel: 'Cancel'
   }
@@ -460,16 +468,110 @@ const elements = {
   closeCssModalBtn: document.getElementById('closeCssModalBtn'),
   copySnippetBtn: document.getElementById('copySnippetBtn'),
   generatedCssCode: document.getElementById('generatedCssCode'),
+  copySecretLinkBtn: document.getElementById('copySecretLinkBtn'),
+  accessDeniedScreen: document.getElementById('accessDeniedScreen'),
+  manualKeyInput: document.getElementById('manualKeyInput'),
+  submitKeyBtn: document.getElementById('submitKeyBtn'),
+  accessErrorMsg: document.getElementById('accessErrorMsg'),
   resetBtn: document.getElementById('resetBtn'),
   toast: document.getElementById('toast'),
   toastMessage: document.getElementById('toastMessage'),
   exportCanvas: document.getElementById('exportCanvas')
 };
 
+// Access Protection Configuration (Option 2: Secret Key & URL Token)
+const ACCESS_CONFIG = {
+  validKeys: ['vnt2026', 'vnt2026vip', 'frame2026'],
+  defaultKey: 'vnt2026',
+  storageKey: 'artframe_access_granted',
+  timeKey: 'artframe_access_time',
+  sessionDuration: 30 * 24 * 60 * 60 * 1000 // 30 days
+};
+
+/**
+ * Check if the user is authorized via secret link or valid session
+ */
+function checkAccessAuthorization() {
+  const params = new URLSearchParams(window.location.search);
+  const urlKey = (params.get('access') || params.get('key') || params.get('token') || '').trim();
+  const isGranted = localStorage.getItem(ACCESS_CONFIG.storageKey) === 'true';
+  const grantTime = parseInt(localStorage.getItem(ACCESS_CONFIG.timeKey) || '0', 10);
+  const isStorageValid = isGranted && (Date.now() - grantTime < ACCESS_CONFIG.sessionDuration);
+
+  if (urlKey && ACCESS_CONFIG.validKeys.includes(urlKey)) {
+    // Valid key in URL parameter: authorize and save session
+    localStorage.setItem(ACCESS_CONFIG.storageKey, 'true');
+    localStorage.setItem(ACCESS_CONFIG.timeKey, Date.now().toString());
+    document.documentElement.classList.remove('access-locked');
+
+    // Auto-clean URL: strip ?access=... from address bar to prevent casual sharing
+    try {
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
+    } catch (e) {
+      // ignore
+    }
+    return true;
+  }
+
+  if (isStorageValid) {
+    document.documentElement.classList.remove('access-locked');
+    return true;
+  }
+
+  // Unauthorized visitor
+  document.documentElement.classList.add('access-locked');
+  return false;
+}
+
+/**
+ * Manually unlock with secret access key from Access Denied screen
+ */
+function unlockAccessWithKey(inputKey) {
+  const key = (inputKey || '').trim();
+  if (ACCESS_CONFIG.validKeys.includes(key)) {
+    localStorage.setItem(ACCESS_CONFIG.storageKey, 'true');
+    localStorage.setItem(ACCESS_CONFIG.timeKey, Date.now().toString());
+    document.documentElement.classList.remove('access-locked');
+    if (elements.accessErrorMsg) elements.accessErrorMsg.classList.add('hidden');
+    if (elements.manualKeyInput) elements.manualKeyInput.value = '';
+    showToast(I18N[state.lang].accessSuccess);
+    return true;
+  } else {
+    if (elements.accessErrorMsg) {
+      elements.accessErrorMsg.textContent = I18N[state.lang].accessWrong;
+      elements.accessErrorMsg.classList.remove('hidden');
+    }
+    if (elements.manualKeyInput) {
+      elements.manualKeyInput.focus();
+    }
+    return false;
+  }
+}
+
+/**
+ * Copy the authorized secret link to clipboard with 1-click
+ */
+function copySecretLink() {
+  const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : '';
+  const pathname = window.location.pathname || '/';
+  const secretUrl = `${origin}${pathname}?access=${ACCESS_CONFIG.defaultKey}`;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(secretUrl).then(() => {
+      showToast(I18N[state.lang].secretLinkCopied);
+    }).catch(() => {
+      prompt('ចម្លង Link សម្ងាត់នេះ៖', secretUrl);
+    });
+  } else {
+    prompt('ចម្លង Link សម្ងាត់នេះ៖', secretUrl);
+  }
+}
+
 /**
  * Initialize
  */
 function init() {
+  checkAccessAuthorization();
   setupEventListeners();
   applyStateToUI();
   updateLiveRender();
@@ -768,6 +870,26 @@ function setupEventListeners() {
     copyToClipboard(elements.generatedCssCode.textContent, msg);
   });
 
+  // Secret Link Copy Action
+  if (elements.copySecretLinkBtn) {
+    elements.copySecretLinkBtn.addEventListener('click', copySecretLink);
+  }
+
+  // Access Denied Screen Manual Key Unlock
+  if (elements.submitKeyBtn) {
+    elements.submitKeyBtn.addEventListener('click', () => {
+      unlockAccessWithKey(elements.manualKeyInput ? elements.manualKeyInput.value : '');
+    });
+  }
+
+  if (elements.manualKeyInput) {
+    elements.manualKeyInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        unlockAccessWithKey(elements.manualKeyInput.value);
+      }
+    });
+  }
+
   // Reset Button
   elements.resetBtn.addEventListener('click', () => {
     applyPreset('siemreap');
@@ -849,6 +971,7 @@ function toggleLanguage() {
   setText('i18nCssModalTitle', t.cssModalTitle);
   setText('i18nCssModalDesc', t.cssModalDesc);
   setText('copySnippetBtn', t.copyCss);
+  setText('i18nSecretLink', t.secretLink);
   setText('closeCssModalBtn', t.done);
   setText('cancelExportBtn', t.cancel);
 
