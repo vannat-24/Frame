@@ -1,0 +1,19 @@
+{
+  "name": "artframe-studio",
+  "version": "1.0.0",
+  "description": "Real-time custom picture frame and typographic poster generator with Khmer language support",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve ."
+  },
+  "keywords": [
+    "artframe",
+    "picture-frame",
+    "poster-generator",
+    "khmer",
+    "siem-reap",
+    "mockup"
+  ],
+  "author": "vannat-24",
+  "license": "MIT"
+}

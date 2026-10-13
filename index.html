@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtFrame ស្ទូឌីយោ — កម្មវិធីបង្កើតស៊ុមរូបថត និងផ្ទាំងរូបភាពផ្ទាល់</title>
+  <meta name="description" content="កម្មវិធីបង្កើត និងរចនាស៊ុមរូបថត ផ្ទាំងរូបភាពសិល្បៈតាមទំហំ ពណ៌ និងអក្សរខ្មែរក្នុងពេលជាក់ស្តែង (Real-Time)">
+  
+  <!-- Google Fonts for Khmer & English -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Bebas+Neue&family=Cinzel:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Kantumruy+Pro:ital,wght@0,300..700;1,300..700&family=Koulen&family=Montserrat:wght@400;600;700;800&family=Moul&family=Playfair+Display:wght@600;700&family=Siemreap&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-dark lang-km">
+  <!-- App Container -->
+  <div class="app-layout">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <rect x="7" y="7" width="10" height="10" rx="1"/>
+            <path d="M7 17l3-3 2 2 3-3 2 2"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">ArtFrame <span>ស្ទូឌីយោ</span></h1>
+          <p class="brand-sub" id="i18nBrandSub">កម្មវិធីបង្កើតស៊ុមរូបថត និងផ្ទាំងរូបភាពផ្ទាល់</p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher -->
+      <div class="view-switch-group">
+        <button id="viewStudioBtn" class="view-btn active" title="ទិដ្ឋភាពស៊ុមទោល">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="2"/>
+          </svg>
+          <span id="i18nStudioView">ទិដ្ឋភាពស៊ុមទោល</span>
+        </button>
+        <button id="viewWallBtn" class="view-btn" title="ប្រៀបធៀបលើជញ្ជាំង (៤ ទំហំ)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="9" height="9" rx="1"/>
+            <rect x="13" y="2" width="9" height="14" rx="1"/>
+            <rect x="2" y="13" width="9" height="9" rx="1"/>
+            <rect x="13" y="18" width="9" height="4" rx="1"/>
+          </svg>
+          <span id="i18nWallView">ប្រៀបធៀបលើជញ្ជាំង (៤ ទំហំ)</span>
+        </button>
+      </div>
+
+      <!-- Top Actions -->
+      <div class="header-actions">
+        <!-- Language Switcher Button -->
+        <button id="langToggleBtn" class="btn btn-lang" title="ប្តូរភាសា / Switch Language">
+          <span class="flag-icon">🇰🇭</span>
+          <span id="langBtnText">ភាសាខ្មែរ</span>
+        </button>
+
+        <button id="resetBtn" class="btn btn-ghost" title="កំណត់ការកំណត់ឡើងវិញ">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+          <span id="i18nReset">កំណត់ឡើងវិញ</span>
+        </button>
+        <button id="copyCssBtn" class="btn btn-secondary" title="មើល និងចម្លងកូដ CSS">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+          <span id="i18nCssCode">កូដ CSS</span>
+        </button>
+        <button id="exportBtn" class="btn btn-primary" title="ទាញយករូបភាពស៊ុម">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span id="i18nDownload">ទាញយករូបភាព</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="workspace-body">
+      
+      <!-- Control Sidebar -->
+      <aside class="controls-sidebar" id="controlsSidebar">
+        
+        <!-- Quick Presets Carousel -->
+        <section class="control-section">
+          <div class="section-header">
+            <span class="section-label" id="i18nPresets">ទម្រង់គំរូរហ័ស</span>
+            <span class="badge">ចុចភ្លាម</span>
+          </div>
+          <div class="preset-cards">
+            <button class="preset-pill active" data-preset="siemreap">
+              <span class="preset-dot" style="background:#d9a566;"></span>
+              <span class="preset-text">សៀមរាប (បុរាណ)</span>
+            </button>
+            <button class="preset-pill" data-preset="angkor-moul">
+              <span class="preset-dot" style="background:#b38747;"></span>
+              <span class="preset-text">អង្គរវត្ត (អក្សរមូល)</span>
+            </button>
+            <button class="preset-pill" data-preset="fuji">
+              <span class="preset-dot" style="background:#e07a5f;"></span>
+              <span class="preset-text">ភ្នំហ្វូជី (ជប៉ុន)</span>
+            </button>
+            <button class="preset-pill" data-preset="coastal">
+              <span class="preset-dot" style="background:#3d84a8;"></span>
+              <span class="preset-text">ឆ្នេរអាម៉ាល់ហ្វី</span>
+            </button>
+            <button class="preset-pill" data-preset="minimal-black">
+              <span class="preset-dot" style="background:#1a1a1a;"></span>
+              <span class="preset-text">ស៊ុមខ្មៅទំនើប</span>
+            </button>
+            <button class="preset-pill" data-preset="gold-luxury">
+              <span class="preset-dot" style="background:#c5a059;"></span>
+              <span class="preset-text">ស៊ុមមាសប្រណិត</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Aspect Ratio & Frame Size -->
+        <section class="control-section">
+          <div class="section-header">
+            <span class="section-label" id="i18nSizeSec">១. ទំហំស៊ុម និងសមាមាត្រ</span>
+            <span id="ratioDisplayBadge" class="badge badge-accent">1:1 ការ៉េ</span>
+          </div>
+          
+          <div class="ratio-grid" id="ratioOptions">
+            <button class="ratio-btn active" data-ratio="1:1" data-w="1" data-h="1" data-label="1:1 ការ៉េ (៥០×៥០ ស.ម)">
+              <div class="ratio-shape r-1-1"></div>
+              <span class="ratio-name">1:1</span>
+              <span class="ratio-dim">៥០×៥០ ស.ម</span>
+            </button>
+            <button class="ratio-btn" data-ratio="4:5" data-w="4" data-h="5" data-label="4:5 បញ្ឈរស្ដង់ដារ (៤០×៥០ ស.ម)">
+              <div class="ratio-shape r-4-5"></div>
+              <span class="ratio-name">4:5</span>
+              <span class="ratio-dim">៤០×៥០ ស.ម</span>
+            </button>
+            <button class="ratio-btn" data-ratio="3:4" data-w="3" data-h="4" data-label="3:4 ផ្ទាំងរូបភាព (៣០×៤០ ស.ម)">
+              <div class="ratio-shape r-3-4"></div>
+              <span class="ratio-name">3:4</span>
+              <span class="ratio-dim">៣០×៤០ ស.ម</span>
+            </button>
+            <button class="ratio-btn" data-ratio="2:3" data-w="2" data-h="3" data-label="2:3 រូបថត (៤០×៦០ ស.ម)">
+              <div class="ratio-shape r-2-3"></div>
+              <span class="ratio-name">2:3</span>
+              <span class="ratio-dim">៤០×៦០ ស.ម</span>
+            </button>
+            <button class="ratio-btn" data-ratio="9:16" data-w="9" data-h="16" data-label="9:16 បញ្ឈរវែង (៣៦×៦៤ ស.ម)">
+              <div class="ratio-shape r-9-16"></div>
+              <span class="ratio-name">9:16</span>
+              <span class="ratio-dim">៣៦×៦៤ ស.ម</span>
+            </button>
+            <button class="ratio-btn" data-ratio="16:9" data-w="16" data-h="9" data-label="16:9 ផ្តេកភាពយន្ត (៦៤×៣៦ ស.ម)">
+              <div class="ratio-shape r-16-9"></div>
+              <span class="ratio-name">16:9</span>
+              <span class="ratio-dim">៦៤×៣៦ ស.ម</span>
+            </button>
+          </div>
+
+          <div class="input-row" style="margin-top: 12px;">
+            <label class="field-label" id="i18nScaleLabel">ពង្រីក/បង្រួមទំហំស៊ុម៖ <span id="scaleVal">100%</span></label>
+            <input type="range" id="frameScaleRange" min="70" max="130" value="100" class="slider-input">
+          </div>
+        </section>
+
+        <!-- Frame Moulding & Material -->
+        <section class="control-section">
+          <div class="section-header">
+            <span class="section-label" id="i18nMaterialSec">២. ពណ៌ និងសម្ភារៈស៊ុម</span>
+          </div>
+
+          <div class="material-grid" id="materialOptions">
+            <button class="material-card active" data-material="natural-oak" title="ឈើអូកធម្មជាតិ (Natural Oak)">
+              <span class="material-swatch swatch-oak"></span>
+              <span class="material-title" id="matOakTitle">ឈើអូកធម្មជាតិ</span>
+            </button>
+            <button class="material-card" data-material="walnut" title="ឈើវ៉ាល់ណាត់ក្រម៉ៅ (Dark Walnut)">
+              <span class="material-swatch swatch-walnut"></span>
+              <span class="material-title" id="matWalnutTitle">ឈើក្រម៉ៅ</span>
+            </button>
+            <button class="material-card" data-material="matte-black" title="ពណ៌ខ្មៅរលោង (Matte Black)">
+              <span class="material-swatch swatch-black"></span>
+              <span class="material-title" id="matBlackTitle">ខ្មៅទំនើប</span>
+            </button>
+            <button class="material-card" data-material="gallery-white" title="ពណ៌សស្អាត (Studio White)">
+              <span class="material-swatch swatch-white"></span>
+              <span class="material-title" id="matWhiteTitle">ពណ៌សស្អាត</span>
+            </button>
+            <button class="material-card" data-material="brushed-gold" title="ពណ៌មាសប្រណិត (Brushed Gold)">
+              <span class="material-swatch swatch-gold"></span>
+              <span class="material-title" id="matGoldTitle">មាសប្រណិត</span>
+            </button>
+            <button class="material-card" data-material="raw-silver" title="អាលុយមីញ៉ូម (Aluminum)">
+              <span class="material-swatch swatch-silver"></span>
+              <span class="material-title" id="matSilverTitle">អាលុយមីញ៉ូម</span>
+            </button>
+          </div>
+
+          <!-- Custom Frame Color -->
+          <div class="color-picker-row">
+            <label class="field-label" for="customFrameColor" id="i18nCustomTint">ជ្រើសរើសពណ៌ស៊ុមតាមចិត្ត</label>
+            <div class="picker-wrapper">
+              <input type="color" id="customFrameColor" value="#d8c5aa" class="color-input">
+              <span id="frameHexCode" class="hex-text">#D8C5AA</span>
+            </div>
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-head">
+              <span class="field-label" id="i18nMouldingWidth">កម្រាស់ស៊ុម</span>
+              <span class="value-tag" id="frameBorderWidthVal">18px</span>
+            </div>
+            <input type="range" id="frameBorderWidth" min="6" max="42" value="18" class="slider-input">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-head">
+              <span class="field-label" id="i18nShadowDepth">កម្រិតស្រមោល 3D</span>
+              <span class="value-tag" id="shadowDepthVal">មធ្យម</span>
+            </div>
+            <input type="range" id="shadowDepth" min="0" max="100" value="65" class="slider-input">
+          </div>
+
+          <div class="switch-row">
+            <span class="field-label" id="i18nGlassReflect">ពន្លឺចាំងកញ្ចក់ពិតៗ</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="glassReflectToggle" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Matboard / Passe-Partout -->
+        <section class="control-section">
+          <div class="section-header">
+            <span class="section-label" id="i18nMatSec">៣. ក្រដាសទ្រាប់ក្នុង (Matboard)</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="matToggle" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div id="matControlsWrapper">
+            <div class="slider-group">
+              <div class="slider-head">
+                <span class="field-label" id="i18nMatWidth">ទំហំគែមក្រដាសទ្រាប់</span>
+                <span class="value-tag" id="matWidthVal">26px</span>
+              </div>
+              <input type="range" id="matWidth" min="8" max="70" value="26" class="slider-input">
+            </div>
+
+            <div class="color-picker-row">
+              <span class="field-label" id="i18nMatColor">ពណ៌ក្រដាសទ្រាប់</span>
+              <div class="mat-color-presets">
+                <button class="mat-dot active" data-matcolor="#f8f7f4" title="ពណ៌ក្រែមស្រាល (Cream)" style="background:#f8f7f4;"></button>
+                <button class="mat-dot" data-matcolor="#ffffff" title="ពណ៌សសុទ្ធ (White)" style="background:#ffffff; border:1px solid #ccc;"></button>
+                <button class="mat-dot" data-matcolor="#eae4d7" title="ពណ៌សរសៃអំបោះ (Warm Linen)" style="background:#eae4d7;"></button>
+                <button class="mat-dot" data-matcolor="#2c2c2e" title="ពណ៌ធ្យូងខ្មៅ (Charcoal)" style="background:#2c2c2e;"></button>
+                <div class="custom-mat-color">
+                  <input type="color" id="customMatColor" value="#f8f7f4" class="color-input-mini" title="ពណ៌តាមចិត្ត">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Title, Description & Typography -->
+        <section class="control-section">
+          <div class="section-header">
+            <span class="section-label" id="i18nTypoSec">៤. ចំណងជើង និងការពិពណ៌នា</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="textVisibleToggle" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div id="textControlsWrapper">
+            <!-- Text Fields -->
+            <div class="input-field-group">
+              <label class="field-label" for="titleInput" id="i18nTitleLabel">ចំណងជើងធំ</label>
+              <div class="text-input-wrap">
+                <input type="text" id="titleInput" value="សៀមរាប" placeholder="បញ្ចូលចំណងជើង..." maxlength="40" class="text-input khmer-input">
+              </div>
+            </div>
+
+            <div class="input-field-group">
+              <label class="field-label" for="descInput" id="i18nDescLabel">ចំណងជើងរង / ការពិពណ៌នា</label>
+              <div class="text-input-wrap">
+                <input type="text" id="descInput" value="ព្រះរាជាណាចក្រកម្ពុជា" placeholder="បញ្ចូលការពិពណ៌នា ឬទីតាំង..." maxlength="70" class="text-input khmer-input">
+              </div>
+            </div>
+
+            <!-- Typography Layout Styles -->
+            <div class="input-field-group">
+              <label class="field-label" id="i18nLayoutStyle">រចនាប័ទ្ម និងទីតាំងអក្សរ</label>
+              <div class="layout-btn-group" id="typographyLayoutOptions">
+                <button class="layout-btn active" data-layout="vintage-overlay" title="បែបផ្ទាំងគំនូរបុរាណ (កណ្តាលលើរូបភាព)">
+                  <span id="layVintage">ផ្ទាំងគំនូរបុរាណ</span>
+                </button>
+                <button class="layout-btn" data-layout="mat-plaque" title="បន្ទះស្លាកសារមន្ទីរ (លើក្រដាសទ្រាប់)">
+                  <span id="layPlaque">ស្លាកសារមន្ទីរ</span>
+                </button>
+                <button class="layout-btn" data-layout="minimal-corner" title="ជ្រុងបែបស្ថាបត្យកម្ម">
+                  <span id="layCorner">ជ្រុងស្ថាបត្យកម្ម</span>
+                </button>
+                <button class="layout-btn" data-layout="top-header" title="ចំណងជើងនៅផ្នែកខាងលើ">
+                  <span id="layHeader">ចំណងជើងខាងលើ</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Font Family -->
+            <div class="input-field-group">
+              <label class="field-label" for="fontFamilySelect" id="i18nFontLabel">ពុម្ពអក្សរ (Font Family)</label>
+              <select id="fontFamilySelect" class="select-input">
+                <optgroup label="🇰🇭 ពុម្ពអក្សរខ្មែរ (Khmer Fonts)">
+                  <option value="'Koulen', cursive" selected>Koulen — អក្សរគូលែន (ក្បាច់ដិតស្អាត)</option>
+                  <option value="'Moul', cursive">Moul — អក្សរមូល (បុរាណប្រណិត)</option>
+                  <option value="'Kantumruy Pro', sans-serif">Kantumruy Pro — កន្ទុំរុយ (ទំនើបទាន់សម័យ)</option>
+                  <option value="'Battambang', cursive">Battambang — បាត់ដំបង (ផ្លូវការ)</option>
+                  <option value="'Siemreap', cursive">Siemreap — សៀមរាប (ធម្មជាតិ)</option>
+                </optgroup>
+                <optgroup label="🌐 ពុម្ពអក្សរអន្តរជាតិ (International Fonts)">
+                  <option value="'Bebas Neue', sans-serif">Bebas Neue (Vintage Poster)</option>
+                  <option value="'Montserrat', sans-serif">Montserrat (Bold Modern)</option>
+                  <option value="'Cinzel', serif">Cinzel (Roman Classical)</option>
+                  <option value="'Playfair Display', serif">Playfair Display (Editorial)</option>
+                  <option value="'Space Mono', monospace">Space Mono (Architectural)</option>
+                  <option value="'Inter', sans-serif">Inter (Clean Neo-Grotesk)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Text Color -->
+            <div class="color-picker-row">
+              <label class="field-label" for="textColorInput" id="i18nTextColor">ពណ៌អក្សរ</label>
+              <div class="picker-wrapper">
+                <input type="color" id="textColorInput" value="#ffffff" class="color-input">
+                <span id="textHexCode" class="hex-text">#FFFFFF</span>
+              </div>
+            </div>
+
+            <!-- Letter Spacing & Size -->
+            <div class="slider-group">
+              <div class="slider-head">
+                <span class="field-label" id="i18nTextSize">ទំហំអក្សរ</span>
+                <span class="value-tag" id="textSizeVal">100%</span>
+              </div>
+              <input type="range" id="textSizeRange" min="60" max="150" value="100" class="slider-input">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-head">
+                <span class="field-label" id="i18nTracking">គម្លាតតួអក្សរ</span>
+                <span class="value-tag" id="letterSpacingVal">3px</span>
+              </div>
+              <input type="range" id="letterSpacingRange" min="0" max="16" value="3" class="slider-input">
+            </div>
+
+            <!-- Decorative divider line toggle -->
+            <div class="switch-row">
+              <span class="field-label" id="i18nDecorLine">បន្ទាត់ឆ្នូតលម្អសងខាង</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="decorLineToggle" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Artwork & Image Source -->
+        <section class="control-section">
+          <div class="section-header">
+            <span class="section-label" id="i18nArtworkSec">៥. រូបភាពសិល្បៈ</span>
+          </div>
+
+          <!-- Artwork Presets Gallery -->
+          <div class="art-thumbnail-grid">
+            <div class="art-thumb active" data-art="assets/poster-siemreap.jpg" title="ប្រាសាទអង្គរវត្ត សៀមរាប">
+              <img src="assets/poster-siemreap.jpg" alt="សៀមរាប អង្គរវត្ត">
+              <span class="thumb-tag">សៀមរាប</span>
+            </div>
+            <div class="art-thumb" data-art="assets/poster-fuji.jpg" title="ភ្នំហ្វូជី ប្រទេសជប៉ុន">
+              <img src="assets/poster-fuji.jpg" alt="ភ្នំហ្វូជី">
+              <span class="thumb-tag">ភ្នំហ្វូជី</span>
+            </div>
+            <div class="art-thumb" data-art="assets/poster-coastal.jpg" title="ឆ្នេរសមុទ្រអាម៉ាល់ហ្វី">
+              <img src="assets/poster-coastal.jpg" alt="ឆ្នេរអាម៉ាល់ហ្វី">
+              <span class="thumb-tag">ឆ្នេរសមុទ្រ</span>
+            </div>
+          </div>
+
+          <!-- Upload own picture -->
+          <div class="upload-area" id="dropArea">
+            <input type="file" id="fileUploadInput" accept="image/*" class="file-hidden-input">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <div class="upload-text">
+              <strong id="i18nUploadTitle">ចុច ឬអូសទម្លាក់រូបថតមកទីនេះ</strong>
+              <span id="i18nUploadSub">គាំទ្រ PNG, JPG, WEBP, SVG</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Wall Background & Lighting Environment -->
+        <section class="control-section">
+          <div class="section-header">
+            <span class="section-label" id="i18nWallSec">៦. ផ្ទៃជញ្ជាំងខាងក្រោយ</span>
+          </div>
+
+          <div class="wall-grid" id="wallOptions">
+            <button class="wall-btn active" data-wall="gallery-plaster" title="ជញ្ជាំងពិព័រណ៍កក់ក្តៅ">
+              <span class="wall-swatch wall-plaster"></span>
+              <span class="wall-name" id="wallPlasterName">ពិព័រណ៍កក់ក្តៅ</span>
+            </button>
+            <button class="wall-btn" data-wall="minimal-white" title="ពណ៌សស្អាត">
+              <span class="wall-swatch wall-white"></span>
+              <span class="wall-name" id="wallWhiteName">ពណ៌សស្អាត</span>
+            </button>
+            <button class="wall-btn" data-wall="scandi-sage" title="បៃតងធម្មជាតិ">
+              <span class="wall-swatch wall-sage"></span>
+              <span class="wall-name" id="wallSageName">បៃតងធម្មជាតិ</span>
+            </button>
+            <button class="wall-btn" data-wall="dark-charcoal" title="ស្ទូឌីយោខ្មៅ">
+              <span class="wall-swatch wall-charcoal"></span>
+              <span class="wall-name" id="wallDarkName">ស្ទូឌីយោខ្មៅ</span>
+            </button>
+            <button class="wall-btn" data-wall="warm-terracotta" title="ដីឥដ្ឋបុរាណ">
+              <span class="wall-swatch wall-terracotta"></span>
+              <span class="wall-name" id="wallTerraName">ដីឥដ្ឋបុរាណ</span>
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Preview Viewport -->
+      <main class="preview-viewport wall-gallery-plaster" id="previewViewport">
+        
+        <!-- Viewport Floating Bar -->
+        <div class="viewport-hud">
+          <div class="hud-item ratio-tag" id="hudRatioTag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+            </svg>
+            <span id="hudRatioText">1:1 ការ៉េ (៥០×៥០ ស.ម)</span>
+          </div>
+          <div class="hud-item zoom-controls">
+            <button id="zoomOutBtn" class="hud-btn" title="បង្រួម">−</button>
+            <span id="zoomLevel">100%</span>
+            <button id="zoomInBtn" class="hud-btn" title="ពង្រីក">+</button>
+            <button id="zoomFitBtn" class="hud-btn" title="សមនឹងអេក្រង់">Fit</button>
+          </div>
+        </div>
+
+        <!-- Mode 1: Studio Single Frame Stage -->
+        <div class="frame-stage" id="studioStage">
+          <!-- Outer Realistic Wall Shadow & Hanging Frame -->
+          <div class="frame-container" id="mainFrameContainer">
+            
+            <!-- Frame Outer Moulding -->
+            <div class="moulding-outer" id="frameMoulding">
+              
+              <!-- Inner Matboard -->
+              <div class="matboard" id="frameMatboard">
+                
+                <!-- Artwork Window -->
+                <div class="art-window" id="frameArtWindow">
+                  <!-- The Picture Image -->
+                  <img id="artworkImage" src="assets/poster-siemreap.jpg" alt="Art preview" crossorigin="anonymous">
+                  
+                  <!-- Real-time Glass Glare Overlay -->
+                  <div class="glass-glare" id="glassGlare"></div>
+
+                  <!-- Typography Overlay (Vintage Poster Style) -->
+                  <div class="poster-typography layout-vintage-overlay" id="posterTypography">
+                    <div class="title-container">
+                      <h2 class="poster-title" id="posterTitleText">សៀមរាប</h2>
+                    </div>
+                    <div class="desc-divider-wrap" id="descDividerWrap">
+                      <span class="divider-line left-line"></span>
+                      <p class="poster-desc" id="posterDescText">ព្រះរាជាណាចក្រកម្ពុជា</p>
+                      <span class="divider-line right-line"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mat Plaque (Shown when layout is 'mat-plaque') -->
+                <div class="mat-plaque-container" id="matPlaqueContainer">
+                  <h3 class="mat-plaque-title" id="matPlaqueTitle">សៀមរាប</h3>
+                  <p class="mat-plaque-desc" id="matPlaqueDesc">ព្រះរាជាណាចក្រកម្ពុជា</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dimension / Aspect Ratio Label Below Frame -->
+            <div class="frame-caption-label" id="studioRatioLabel">1:1</div>
+          </div>
+        </div>
+
+        <!-- Mode 2: Multi-Frame Gallery Wall Comparison (Exact Match to User Reference Photo!) -->
+        <div class="gallery-wall-stage hidden" id="wallStage">
+          <div class="gallery-wall-header">
+            <h2 id="i18nWallHeaderTitle">ការប្រៀបធៀបទំហំស៊ុមលើជញ្ជាំង</h2>
+            <p id="i18nWallHeaderSub">ប្រៀបធៀបសមាមាត្រទំហំស៊ុមស្ដង់ដារទាំង ៤ ក្នុងពេលដំណាលគ្នា ជាមួយស៊ុម រូបភាព និងអក្សរខ្មែរស្របគ្នា។</p>
+          </div>
+          
+          <div class="wall-grid-comparison" id="wallGridComparison">
+            <!-- 1:1 Frame -->
+            <div class="wall-frame-col">
+              <div class="wall-mockup-frame frame-1-1" id="wallFrame1">
+                <div class="wall-moulding">
+                  <div class="wall-mat">
+                    <div class="wall-art-wrap">
+                      <img class="wall-art-img" src="assets/poster-siemreap.jpg" alt="1:1 frame">
+                      <div class="wall-glass"></div>
+                      <div class="wall-typo">
+                        <span class="w-title">សៀមរាប</span>
+                        <span class="w-desc">ព្រះរាជាណាចក្រកម្ពុជា</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="wall-label">1:1</div>
+            </div>
+
+            <!-- 9:16 Frame -->
+            <div class="wall-frame-col">
+              <div class="wall-mockup-frame frame-9-16" id="wallFrame2">
+                <div class="wall-moulding">
+                  <div class="wall-mat">
+                    <div class="wall-art-wrap">
+                      <img class="wall-art-img" src="assets/poster-siemreap.jpg" alt="9:16 frame">
+                      <div class="wall-glass"></div>
+                      <div class="wall-typo">
+                        <span class="w-title">សៀមរាប</span>
+                        <span class="w-desc">ព្រះរាជាណាចក្រកម្ពុជា</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="wall-label">9:16</div>
+            </div>
+
+            <!-- 16:9 Frame -->
+            <div class="wall-frame-col">
+              <div class="wall-mockup-frame frame-16-9" id="wallFrame3">
+                <div class="wall-moulding">
+                  <div class="wall-mat">
+                    <div class="wall-art-wrap">
+                      <img class="wall-art-img" src="assets/poster-siemreap.jpg" alt="16:9 frame">
+                      <div class="wall-glass"></div>
+                      <div class="wall-typo">
+                        <span class="w-title">សៀមរាប</span>
+                        <span class="w-desc">ព្រះរាជាណាចក្រកម្ពុជា</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="wall-label">16:9</div>
+            </div>
+
+            <!-- 4:5 Frame -->
+            <div class="wall-frame-col">
+              <div class="wall-mockup-frame frame-4-5" id="wallFrame4">
+                <div class="wall-moulding">
+                  <div class="wall-mat">
+                    <div class="wall-art-wrap">
+                      <img class="wall-art-img" src="assets/poster-siemreap.jpg" alt="4:5 frame">
+                      <div class="wall-glass"></div>
+                      <div class="wall-typo">
+                        <span class="w-title">សៀមរាប</span>
+                        <span class="w-desc">ព្រះរាជាណាចក្រកម្ពុជា</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="wall-label">4:5</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden canvas for high resolution rendering & export -->
+        <canvas id="exportCanvas" style="display:none;"></canvas>
+      </main>
+    </div>
+  </div>
+
+  <!-- Export Dialog Modal -->
+  <div class="modal-backdrop hidden" id="exportModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="i18nExportModalTitle">ទាញយករូបភាពស៊ុមដែលបានរចនា</h3>
+        <button class="modal-close" id="closeExportModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc" id="i18nExportModalDesc">ជ្រើសរើសទម្រង់ និងកម្រិតគុណភាពរូបភាព៖</p>
+        <div class="export-options-grid">
+          <button class="export-choice active" data-export-mode="framed-art">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <rect x="7" y="7" width="10" height="10" rx="1"/>
+            </svg>
+            <strong id="i18nExportChoice1Title">រូបភាពស៊ុមគុណភាពខ្ពស់ (Framed Artwork)</strong>
+            <span id="i18nExportChoice1Desc">ផ្ទៃខាងក្រោយថ្លា (Transparent) ស៊ុមស្អាតឥតខ្ចោះ (PNG/JPEG)</span>
+          </button>
+          <button class="export-choice" data-export-mode="wall-mockup">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="20" rx="2"/>
+              <circle cx="8" cy="8" r="2"/>
+            </svg>
+            <strong id="i18nExportChoice2Title">រូបភាពស៊ុមព្យួរលើជញ្ជាំងពិត (Wall Mockup)</strong>
+            <span id="i18nExportChoice2Desc">បង្ហាញស៊ុមព្យួរលើជញ្ជាំងជាមួយស្រមោលពន្លឺធម្មជាតិ 3D</span>
+          </button>
+        </div>
+
+        <div class="export-resolution-row">
+          <span class="field-label" id="i18nResLabel">កម្រិតភាពច្បាស់៖</span>
+          <div class="export-scale-btns">
+            <button class="res-btn" data-scale="1">ធម្មតា (1x)</button>
+            <button class="res-btn active" data-scale="2">ច្បាស់ខ្ពស់ (2x)</button>
+            <button class="res-btn" data-scale="3">ច្បាស់បំផុត (3x Print)</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="cancelExportBtn">បោះបង់</button>
+        <button class="btn btn-primary" id="confirmDownloadBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span id="downloadBtnText">ទាញយករូបភាព (PNG)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSS Code Modal -->
+  <div class="modal-backdrop hidden" id="cssModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="i18nCssModalTitle">កូដ CSS នៃស៊ុមរូបថត</h3>
+        <button class="modal-close" id="closeCssModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc" id="i18nCssModalDesc">ចម្លងកូដ CSS នេះដើម្បីយកទៅប្រើប្រាស់ក្នុងគេហទំព័រ ឬកម្មវិធីរបស់អ្នក៖</p>
+        <div class="code-box-wrapper">
+          <pre><code id="generatedCssCode">/* កូដ CSS នៃស៊ុម ArtFrame */</code></pre>
+          <button id="copySnippetBtn" class="btn btn-secondary btn-sm copy-snippet-btn">ចម្លងកូដ CSS</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="closeCssModalBtn">រួចរាល់</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="toast hidden">
+    <span id="toastMessage">បានរក្សាទុក!</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
