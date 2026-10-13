@@ -1977,8 +1977,82 @@ html.access-locked #accessDeniedScreen {
   font-size: 0.88rem;
   color: #cbd5e1;
   line-height: 1.65;
-  margin: 0 auto 24px;
+  margin: 0 auto 18px;
   max-width: 380px;
+}
+
+.access-contact-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.access-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 18px;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #ffffff !important;
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.access-contact-btn svg {
+  flex-shrink: 0;
+}
+
+.access-contact-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  color: #ffffff !important;
+}
+
+.access-contact-btn:active {
+  transform: translateY(0);
+}
+
+.btn-telegram {
+  background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
+  box-shadow: 0 4px 16px rgba(34, 158, 217, 0.35);
+}
+
+.btn-telegram:hover {
+  box-shadow: 0 6px 22px rgba(34, 158, 217, 0.5);
+}
+
+.btn-facebook {
+  background: linear-gradient(135deg, #1877F2 0%, #0d65d9 100%);
+  box-shadow: 0 4px 16px rgba(24, 119, 242, 0.35);
+}
+
+.btn-facebook:hover {
+  box-shadow: 0 6px 22px rgba(24, 119, 242, 0.5);
+}
+
+.access-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 18px 0 16px;
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.access-divider::before,
+.access-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.access-divider span {
+  padding: 0 12px;
 }
 
 .access-key-form {
