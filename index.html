@@ -102,6 +102,10 @@
               <span class="preset-dot" style="background:#d9a566;"></span>
               <span class="preset-text">សៀមរាប (បុរាណ)</span>
             </button>
+            <button class="preset-pill" data-preset="border-milestone">
+              <span class="preset-dot" style="background:#00e5ff;"></span>
+              <span class="preset-text" id="i18nPresetMilestone">បង្គោលព្រំដែន (បច្ចេកទេស)</span>
+            </button>
             <button class="preset-pill" data-preset="angkor-moul">
               <span class="preset-dot" style="background:#b38747;"></span>
               <span class="preset-text">អង្គរវត្ត (អក្សរមូល)</span>
@@ -197,6 +201,10 @@
             <button class="material-card" data-material="brushed-gold" title="ពណ៌មាសប្រណិត (Brushed Gold)">
               <span class="material-swatch swatch-gold"></span>
               <span class="material-title" id="matGoldTitle">មាសប្រណិត</span>
+            </button>
+            <button class="material-card" data-material="cyan-tech" title="ខៀវផ្ទៃមេឃ (Cyan Tech)">
+              <span class="material-swatch swatch-cyan"></span>
+              <span class="material-title" id="matCyanTitle">ខៀវផ្ទៃមេឃ</span>
             </button>
             <button class="material-card" data-material="raw-silver" title="អាលុយមីញ៉ូម (Aluminum)">
               <span class="material-swatch swatch-silver"></span>
@@ -305,6 +313,9 @@
                 <button class="layout-btn active" data-layout="vintage-overlay" title="បែបផ្ទាំងគំនូរបុរាណ (កណ្តាលលើរូបភាព)">
                   <span id="layVintage">ផ្ទាំងគំនូរបុរាណ</span>
                 </button>
+                <button class="layout-btn" data-layout="border-report" title="ទម្រង់បង្គោលព្រំដែន / របាយការណ៍បច្ចេកទេស">
+                  <span id="layReport">បង្គោលព្រំដែន</span>
+                </button>
                 <button class="layout-btn" data-layout="mat-plaque" title="បន្ទះស្លាកសារមន្ទីរ (លើក្រដាសទ្រាប់)">
                   <span id="layPlaque">ស្លាកសារមន្ទីរ</span>
                 </button>
@@ -348,13 +359,21 @@
               </div>
             </div>
 
-            <!-- Letter Spacing & Size -->
+            <!-- Custom Font Size Controls for Title & Description -->
             <div class="slider-group">
               <div class="slider-head">
-                <span class="field-label" id="i18nTextSize">ទំហំអក្សរ</span>
-                <span class="value-tag" id="textSizeVal">100%</span>
+                <span class="field-label" id="i18nTitleSize">ទំហំអក្សរចំណងជើង (Title)</span>
+                <span class="value-tag" id="titleSizeVal">100%</span>
               </div>
-              <input type="range" id="textSizeRange" min="60" max="150" value="100" class="slider-input">
+              <input type="range" id="titleSizeRange" min="40" max="220" value="100" class="slider-input">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-head">
+                <span class="field-label" id="i18nDescSize">ទំហំអក្សរពិពណ៌នា (Description)</span>
+                <span class="value-tag" id="descSizeVal">100%</span>
+              </div>
+              <input type="range" id="descSizeRange" min="40" max="220" value="100" class="slider-input">
             </div>
 
             <div class="slider-group">
@@ -395,6 +414,10 @@
             <div class="art-thumb" data-art="assets/poster-coastal.jpg" title="ឆ្នេរសមុទ្រអាម៉ាល់ហ្វី">
               <img src="assets/poster-coastal.jpg" alt="ឆ្នេរអាម៉ាល់ហ្វី">
               <span class="thumb-tag">ឆ្នេរសមុទ្រ</span>
+            </div>
+            <div class="art-thumb" data-art="assets/poster-border-post.jpg" title="បង្គោលព្រំដែនកម្ពុជា">
+              <img src="assets/poster-border-post.jpg" alt="បង្គោលព្រំដែន">
+              <span class="thumb-tag" id="i18nBorderTag">បង្គោលព្រំដែន</span>
             </div>
           </div>
 
@@ -499,6 +522,11 @@
                 <div class="mat-plaque-container" id="matPlaqueContainer">
                   <h3 class="mat-plaque-title" id="matPlaqueTitle">សៀមរាប</h3>
                   <p class="mat-plaque-desc" id="matPlaqueDesc">ព្រះរាជាណាចក្រកម្ពុជា</p>
+                </div>
+
+                <!-- Technical Border Milestone Report Title Panel (Shown when layout is 'border-report') -->
+                <div class="report-title-panel" id="reportTitlePanel">
+                  <h3 class="report-panel-title" id="reportPanelTitle">កម្ពុជា - 130/2(1) - បង្គោលបំពេញបន្ថែម ថតពីចំហៀង</h3>
                 </div>
               </div>
             </div>

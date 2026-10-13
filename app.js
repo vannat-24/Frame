@@ -38,11 +38,17 @@ const I18N = {
     layPlaque: 'ស្លាកសារមន្ទីរ',
     layCorner: 'ជ្រុងស្ថាបត្យកម្ម',
     layHeader: 'ចំណងជើងខាងលើ',
+    layReport: 'បង្គោលព្រំដែន',
     fontLabel: 'ពុម្ពអក្សរ (Font Family)',
     textColor: 'ពណ៌អក្សរ',
+    titleSize: 'ទំហំអក្សរចំណងជើង (Title)',
+    descSize: 'ទំហំអក្សរពិពណ៌នា (Description)',
     textSize: 'ទំហំអក្សរ',
     tracking: 'គម្លាតតួអក្សរ',
     decorLine: 'បន្ទាត់ឆ្នូតលម្អសងខាង',
+    matCyan: 'ខៀវផ្ទៃមេឃ',
+    presetMilestone: 'បង្គោលព្រំដែន (បច្ចេកទេស)',
+    borderTag: 'បង្គោលព្រំដែន',
     artworkSec: '៥. រូបភាពសិល្បៈ',
     uploadTitle: 'ចុច ឬអូសទម្លាក់រូបថតមកទីនេះ',
     uploadSub: 'គាំទ្រ PNG, JPG, WEBP, SVG',
@@ -81,6 +87,9 @@ const I18N = {
     matWhite: 'Studio White',
     matGold: 'Brushed Gold',
     matSilver: 'Aluminum',
+    matCyan: 'Cyan Tech',
+    presetMilestone: 'Border Milestone',
+    borderTag: 'Border Post',
     customTint: 'Custom Frame Tint',
     mouldingWidth: 'Moulding Width',
     shadowDepth: '3D Wall Shadow Depth',
@@ -96,8 +105,11 @@ const I18N = {
     layPlaque: 'Gallery Plaque',
     layCorner: 'Minimal Corner',
     layHeader: 'Top Header',
+    layReport: 'Border Milestone',
     fontLabel: 'Font Family',
     textColor: 'Text & Accent Color',
+    titleSize: 'Title Font Size',
+    descSize: 'Description Font Size',
     textSize: 'Title Text Scale',
     tracking: 'Letter Spacing',
     decorLine: 'Decorative Lines',
@@ -149,9 +161,11 @@ const state = {
   textVisible: true,
   title: 'សៀមរាប',
   desc: 'ព្រះរាជាណាចក្រកម្ពុជា',
-  layout: 'vintage-overlay', // 'vintage-overlay' | 'mat-plaque' | 'minimal-corner' | 'top-header'
+  layout: 'vintage-overlay', // 'vintage-overlay' | 'mat-plaque' | 'minimal-corner' | 'top-header' | 'border-report'
   fontFamily: "'Koulen', cursive",
   textColor: '#ffffff',
+  titleSize: 100,
+  descSize: 100,
   textSize: 100,
   letterSpacing: 3,
   decorLine: true,
@@ -189,11 +203,40 @@ const PRESETS = {
     layout: 'vintage-overlay',
     fontFamily: "'Koulen', cursive",
     textColor: '#ffffff',
+    titleSize: 100,
+    descSize: 100,
     textSize: 100,
     letterSpacing: 3,
     decorLine: true,
     artworkSrc: 'assets/poster-siemreap.jpg',
     wall: 'gallery-plaster'
+  },
+  'border-milestone': {
+    aspectRatio: '2:3',
+    aspectW: 2,
+    aspectH: 3,
+    aspectLabel: '2:3 រូបថត (៤០×៦០ ស.ម)',
+    material: 'cyan-tech',
+    customFrameColor: '#00d4ff',
+    frameBorderWidth: 14,
+    shadowDepth: 55,
+    glassReflect: false,
+    matEnabled: true,
+    matWidth: 14,
+    matColor: '#ffffff',
+    textVisible: true,
+    title: 'កម្ពុជា - 130/2(1) - បង្គោលបំពេញបន្ថែម ថតពីចំហៀង',
+    desc: 'ភូមិផ្កាត្រាច ឃុំកក់ ស្រុកពញាក្រែក ខេត្តត្បូងឃ្មុំ',
+    layout: 'border-report',
+    fontFamily: "'Battambang', cursive",
+    textColor: '#ffffff',
+    titleSize: 110,
+    descSize: 95,
+    textSize: 100,
+    letterSpacing: 2,
+    decorLine: false,
+    artworkSrc: 'assets/poster-border-post.jpg',
+    wall: 'minimal-white'
   },
   'angkor-moul': {
     aspectRatio: '4:5',
@@ -349,6 +392,8 @@ const elements = {
   matPlaqueContainer: document.getElementById('matPlaqueContainer'),
   matPlaqueTitle: document.getElementById('matPlaqueTitle'),
   matPlaqueDesc: document.getElementById('matPlaqueDesc'),
+  reportTitlePanel: document.getElementById('reportTitlePanel'),
+  reportPanelTitle: document.getElementById('reportPanelTitle'),
   studioRatioLabel: document.getElementById('studioRatioLabel'),
   
   // HUD
@@ -388,8 +433,12 @@ const elements = {
   fontFamilySelect: document.getElementById('fontFamilySelect'),
   textColorInput: document.getElementById('textColorInput'),
   textHexCode: document.getElementById('textHexCode'),
-  textSizeRange: document.getElementById('textSizeRange'),
-  textSizeVal: document.getElementById('textSizeVal'),
+  titleSizeRange: document.getElementById('titleSizeRange'),
+  titleSizeVal: document.getElementById('titleSizeVal'),
+  descSizeRange: document.getElementById('descSizeRange'),
+  descSizeVal: document.getElementById('descSizeVal'),
+  textSizeRange: document.getElementById('titleSizeRange'), // for backwards compatibility
+  textSizeVal: document.getElementById('titleSizeVal'),
   letterSpacingRange: document.getElementById('letterSpacingRange'),
   letterSpacingVal: document.getElementById('letterSpacingVal'),
   decorLineToggle: document.getElementById('decorLineToggle'),
@@ -583,11 +632,22 @@ function setupEventListeners() {
     updateLiveRender();
   });
 
-  elements.textSizeRange.addEventListener('input', (e) => {
-    state.textSize = parseInt(e.target.value, 10);
-    elements.textSizeVal.textContent = `${state.textSize}%`;
-    updateLiveRender();
-  });
+  if (elements.titleSizeRange) {
+    elements.titleSizeRange.addEventListener('input', (e) => {
+      state.titleSize = parseInt(e.target.value, 10);
+      state.textSize = state.titleSize;
+      elements.titleSizeVal.textContent = `${state.titleSize}%`;
+      updateLiveRender();
+    });
+  }
+
+  if (elements.descSizeRange) {
+    elements.descSizeRange.addEventListener('input', (e) => {
+      state.descSize = parseInt(e.target.value, 10);
+      elements.descSizeVal.textContent = `${state.descSize}%`;
+      updateLiveRender();
+    });
+  }
 
   elements.letterSpacingRange.addEventListener('input', (e) => {
     state.letterSpacing = parseInt(e.target.value, 10);
@@ -746,6 +806,7 @@ function toggleLanguage() {
   setText('matWhiteTitle', t.matWhite);
   setText('matGoldTitle', t.matGold);
   setText('matSilverTitle', t.matSilver);
+  setText('matCyanTitle', t.matCyan);
   setText('i18nCustomTint', t.customTint);
   setText('i18nMouldingWidth', t.mouldingWidth);
   setText('i18nShadowDepth', t.shadowDepth);
@@ -758,12 +819,17 @@ function toggleLanguage() {
   setText('i18nDescLabel', t.descLabel);
   setText('i18nLayoutStyle', t.layoutStyle);
   setText('layVintage', t.layVintage);
+  setText('layReport', t.layReport);
   setText('layPlaque', t.layPlaque);
   setText('layCorner', t.layCorner);
   setText('layHeader', t.layHeader);
   setText('i18nFontLabel', t.fontLabel);
   setText('i18nTextColor', t.textColor);
+  setText('i18nTitleSize', t.titleSize);
+  setText('i18nDescSize', t.descSize);
   setText('i18nTextSize', t.textSize);
+  setText('i18nPresetMilestone', t.presetMilestone);
+  setText('i18nBorderTag', t.borderTag);
   setText('i18nTracking', t.tracking);
   setText('i18nDecorLine', t.decorLine);
   setText('i18nArtworkSec', t.artworkSec);
@@ -879,8 +945,14 @@ function syncGalleryWall() {
       titleSpan.textContent = state.title;
       descSpan.textContent = state.desc;
       titleSpan.style.fontFamily = state.fontFamily;
-      titleSpan.style.color = state.textColor;
+      titleSpan.style.color = state.layout === 'border-report' ? '#050505' : state.textColor;
       descSpan.style.color = state.textColor;
+      titleSpan.style.fontSize = `calc(1.15rem * ${(state.titleSize || 100) / 100})`;
+      descSpan.style.fontSize = `calc(0.58rem * ${(state.descSize || 100) / 100})`;
+    }
+
+    if (state.layout === 'border-report') {
+      mat.style.backgroundColor = '#ffffff';
     }
   });
 }
@@ -932,8 +1004,14 @@ function applyStateToUI() {
   elements.fontFamilySelect.value = state.fontFamily;
   elements.textColorInput.value = state.textColor;
   elements.textHexCode.textContent = state.textColor.toUpperCase();
-  elements.textSizeRange.value = state.textSize;
-  elements.textSizeVal.textContent = `${state.textSize}%`;
+  if (elements.titleSizeRange) {
+    elements.titleSizeRange.value = state.titleSize || state.textSize || 100;
+    elements.titleSizeVal.textContent = `${state.titleSize || state.textSize || 100}%`;
+  }
+  if (elements.descSizeRange) {
+    elements.descSizeRange.value = state.descSize || state.textSize || 100;
+    elements.descSizeVal.textContent = `${state.descSize || state.textSize || 100}%`;
+  }
   elements.letterSpacingRange.value = state.letterSpacing;
   elements.letterSpacingVal.textContent = `${state.letterSpacing}px`;
   elements.decorLineToggle.checked = state.decorLine;
@@ -966,7 +1044,9 @@ function updateLiveRender() {
   root.style.setProperty('--frame-base-color', state.customFrameColor);
   root.style.setProperty('--text-color', state.textColor);
   root.style.setProperty('--font-family', state.fontFamily);
-  root.style.setProperty('--font-scale', state.textSize / 100);
+  root.style.setProperty('--font-scale', (state.titleSize || state.textSize || 100) / 100);
+  root.style.setProperty('--title-font-scale', (state.titleSize || state.textSize || 100) / 100);
+  root.style.setProperty('--desc-font-scale', (state.descSize || state.textSize || 100) / 100);
   root.style.setProperty('--letter-spacing', `${state.letterSpacing}px`);
 
   // 2. Aspect Ratio & Dimensions Calculation
@@ -1008,12 +1088,27 @@ function updateLiveRender() {
   if (!state.textVisible) {
     elements.posterTypography.classList.add('hidden');
     elements.matPlaqueContainer.classList.remove('active');
+    if (elements.reportTitlePanel) elements.reportTitlePanel.classList.remove('active');
+    elements.frameMatboard.classList.remove('layout-mode-border-report');
   } else {
     elements.posterTitleText.textContent = state.title;
     elements.posterDescText.textContent = state.desc;
 
     // Layout variations
-    if (state.layout === 'mat-plaque' && state.matEnabled) {
+    if (state.layout === 'border-report') {
+      elements.matPlaqueContainer.classList.remove('active');
+      elements.frameMatboard.classList.add('layout-mode-border-report');
+      if (elements.reportTitlePanel) {
+        elements.reportTitlePanel.classList.add('active');
+        elements.reportPanelTitle.textContent = state.title;
+        elements.reportPanelTitle.style.fontFamily = state.fontFamily;
+        elements.reportPanelTitle.style.letterSpacing = `${state.letterSpacing}px`;
+      }
+      elements.posterTypography.classList.remove('hidden');
+      elements.posterTypography.className = 'poster-typography layout-border-report';
+    } else if (state.layout === 'mat-plaque' && state.matEnabled) {
+      elements.frameMatboard.classList.remove('layout-mode-border-report');
+      if (elements.reportTitlePanel) elements.reportTitlePanel.classList.remove('active');
       elements.posterTypography.classList.add('hidden');
       elements.matPlaqueContainer.classList.add('active');
       elements.matPlaqueTitle.textContent = state.title;
@@ -1021,6 +1116,8 @@ function updateLiveRender() {
       elements.matPlaqueTitle.style.fontFamily = state.fontFamily;
       elements.matPlaqueTitle.style.letterSpacing = `${state.letterSpacing}px`;
     } else {
+      elements.frameMatboard.classList.remove('layout-mode-border-report');
+      if (elements.reportTitlePanel) elements.reportTitlePanel.classList.remove('active');
       elements.matPlaqueContainer.classList.remove('active');
       elements.posterTypography.classList.remove('hidden');
       elements.posterTypography.className = `poster-typography layout-${state.layout}`;
@@ -1078,8 +1175,12 @@ function performExport() {
     const baseW = 600;
     const baseH = Math.round(600 * (state.aspectH / state.aspectW));
     
-    const matPad = state.matEnabled ? Math.round(state.matWidth * 1.5) : 0;
-    const plaqueH = (state.layout === 'mat-plaque' && state.matEnabled && state.textVisible) ? 46 : 0;
+    const isBorderReport = (state.layout === 'border-report' && state.textVisible);
+    const reportPad = 14;
+    const reportGap = 14;
+    const titleBoxH = isBorderReport ? (Math.round(48 * ((state.titleSize || 100) / 100)) + 22) : 0;
+    const matPad = isBorderReport ? reportPad : (state.matEnabled ? Math.round(state.matWidth * 1.5) : 0);
+    const plaqueH = (state.layout === 'mat-plaque' && state.matEnabled && state.textVisible) ? 46 : (isBorderReport ? (titleBoxH + reportGap) : 0);
     const framePad = Math.round(state.frameBorderWidth * 1.5);
 
     let canvasW, canvasH, startX, startY;
@@ -1129,11 +1230,11 @@ function performExport() {
     const matW = frameW - (framePad * 2 * dpr);
     const matH = frameH - (framePad * 2 * dpr);
 
-    ctx.fillStyle = state.matEnabled ? state.matColor : '#000000';
+    ctx.fillStyle = isBorderReport ? '#ffffff' : (state.matEnabled ? state.matColor : '#000000');
     ctx.fillRect(matX, matY, matW, matH);
 
     // Inner matboard bevel shadow
-    if (state.matEnabled) {
+    if (state.matEnabled && !isBorderReport) {
       ctx.save();
       ctx.strokeStyle = 'rgba(0,0,0,0.18)';
       ctx.lineWidth = 2 * dpr;
@@ -1166,11 +1267,57 @@ function performExport() {
     }
 
     // 7. Draw Typography overlay if enabled and inside artwork
-    if (state.textVisible && state.layout !== 'mat-plaque') {
+    if (state.textVisible && state.layout !== 'mat-plaque' && !isBorderReport) {
       drawPosterTypographyOnCanvas(ctx, artX, artY, artDrawW, artDrawH, dpr);
     }
 
+    // For border-report layout, draw description at the bottom of artwork
+    if (isBorderReport) {
+      const descFontSize = Math.round(15 * ((state.descSize || 100) / 100) * dpr);
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
+      ctx.shadowBlur = 8 * dpr;
+      ctx.shadowOffsetY = 1 * dpr;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `bold ${descFontSize}px 'Kantumruy Pro', ${state.fontFamily}`;
+      ctx.fillText(state.desc, artX + (artDrawW / 2), artY + artDrawH - (22 * dpr));
+      ctx.restore();
+    }
+
     ctx.restore(); // Restore clip
+
+    // If border-report, stroke cyan border around artwork window & draw title box below
+    if (isBorderReport) {
+      const cyanColor = (state.material === 'cyan-tech' || !state.customFrameColor) ? '#00d4ff' : state.customFrameColor;
+      const strokeW = Math.round(5 * dpr);
+      
+      // Art window border
+      ctx.save();
+      ctx.strokeStyle = cyanColor;
+      ctx.lineWidth = strokeW;
+      ctx.strokeRect(artX, artY, artDrawW, artDrawH);
+      ctx.restore();
+
+      // Lower Title Box
+      const boxY = artY + artDrawH + (reportGap * dpr);
+      const boxH = titleBoxH * dpr;
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(artX, boxY, artDrawW, boxH);
+      ctx.strokeStyle = cyanColor;
+      ctx.lineWidth = strokeW;
+      ctx.strokeRect(artX, boxY, artDrawW, boxH);
+
+      const titleFontSize = Math.round(20 * ((state.titleSize || 100) / 100) * dpr);
+      ctx.fillStyle = '#050505';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = `bold ${titleFontSize}px ${state.fontFamily}`;
+      ctx.fillText(state.title, artX + (artDrawW / 2), boxY + (boxH / 2));
+      ctx.restore();
+    }
 
     // 8. Draw Mat Plaque if layout is 'mat-plaque'
     if (state.textVisible && state.layout === 'mat-plaque' && state.matEnabled) {
@@ -1178,11 +1325,11 @@ function performExport() {
       ctx.save();
       ctx.textAlign = 'center';
       ctx.fillStyle = '#222222';
-      ctx.font = `bold ${18 * (state.textSize / 100) * dpr}px ${state.fontFamily}`;
+      ctx.font = `bold ${18 * ((state.titleSize || 100) / 100) * dpr}px ${state.fontFamily}`;
       ctx.fillText(state.title, matX + (matW / 2), plaqueY);
 
       ctx.fillStyle = '#666666';
-      ctx.font = `600 ${9 * (state.textSize / 100) * dpr}px 'Kantumruy Pro', Montserrat, sans-serif`;
+      ctx.font = `600 ${9 * ((state.descSize || 100) / 100) * dpr}px 'Kantumruy Pro', Montserrat, sans-serif`;
       ctx.fillText(state.desc, matX + (matW / 2), plaqueY + (16 * dpr));
       ctx.restore();
     }
@@ -1232,6 +1379,12 @@ function drawMouldingOnCanvas(ctx, x, y, w, h, borderPx) {
     grad.addColorStop(0.5, '#b0b4b8');
     grad.addColorStop(1, '#9ea2a6');
     ctx.fillStyle = grad;
+  } else if (state.material === 'cyan-tech') {
+    const grad = ctx.createLinearGradient(x, y, x + w, y + h);
+    grad.addColorStop(0, '#00f0ff');
+    grad.addColorStop(0.5, '#00b4d8');
+    grad.addColorStop(1, '#00e5ff');
+    ctx.fillStyle = grad;
   } else {
     ctx.fillStyle = state.customFrameColor;
   }
@@ -1279,9 +1432,10 @@ function drawPosterTypographyOnCanvas(ctx, x, y, w, h, dpr) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
-  const titleScale = (state.textSize / 100);
+  const titleScale = ((state.titleSize || state.textSize || 100) / 100);
+  const descScale = ((state.descSize || state.textSize || 100) / 100);
   const titleFontSize = Math.round(38 * titleScale * dpr);
-  const descFontSize = Math.round(12 * titleScale * dpr);
+  const descFontSize = Math.round(12 * descScale * dpr);
 
   let posY = y + h * 0.85;
 
@@ -1362,7 +1516,62 @@ function downloadCanvas(canvas, filename) {
  * Show CSS Snippet Modal
  */
 function showCssSnippetModal() {
-  const css = `/* កូដ CSS នៃស៊ុមរូបថត — ArtFrame Studio */
+  let css;
+  if (state.layout === 'border-report') {
+    css = `/* កូដ CSS នៃស៊ុមរូបថតទម្រង់បង្គោលព្រំដែន — ArtFrame Studio */
+.milestone-report-frame {
+  box-sizing: border-box;
+  padding: ${state.frameBorderWidth}px;
+  background-color: ${state.customFrameColor};
+  border-radius: 2px;
+}
+
+.report-card {
+  background-color: #ffffff;
+  padding: 14px;
+}
+
+.report-photo-box {
+  position: relative;
+  border: 4px solid ${state.customFrameColor};
+  aspect-ratio: ${state.aspectW} / ${state.aspectH};
+}
+
+.report-photo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.report-description {
+  position: absolute;
+  bottom: 12px;
+  left: 0; right: 0;
+  text-align: center;
+  color: #ffffff;
+  font-family: ${state.fontFamily};
+  font-size: calc(0.95rem * ${(state.descSize || 100) / 100});
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.85);
+}
+
+.report-title-box {
+  margin-top: 14px;
+  padding: 14px 18px;
+  text-align: center;
+  background-color: #ffffff;
+  border: 4px solid ${state.customFrameColor};
+}
+
+.report-title {
+  margin: 0;
+  color: #000000;
+  font-family: ${state.fontFamily};
+  font-size: calc(1.35rem * ${(state.titleSize || 100) / 100});
+  font-weight: 700;
+}`;
+  } else {
+    css = `/* កូដ CSS នៃស៊ុមរូបថត — ArtFrame Studio */
 .framed-picture {
   box-sizing: border-box;
   aspect-ratio: ${state.aspectW} / ${state.aspectH};
@@ -1390,7 +1599,16 @@ function showCssSnippetModal() {
   object-fit: cover;
   display: block;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.poster-title {
+  font-size: calc(2.5rem * ${(state.titleSize || 100) / 100});
+}
+
+.poster-desc {
+  font-size: calc(0.85rem * ${(state.descSize || 100) / 100});
 }`;
+  }
 
   elements.generatedCssCode.textContent = css;
   elements.cssModal.classList.remove('hidden');
