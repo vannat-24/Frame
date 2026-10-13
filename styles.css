@@ -1785,3 +1785,55 @@ input:checked + .switch-slider:before {
     gap: 40px;
   }
 }
+
+/* Mobile Screen (ទំហំទូរសព្ទ — Show ONLY Logo & Download Button) */
+@media (max-width: 768px) {
+  .app-header {
+    height: 56px;
+    padding: 0 16px;
+  }
+
+  .brand {
+    gap: 8px;
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brand-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .brand-title {
+    font-size: 1rem;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  /* Hide Mode Switcher, Language Button, Reset Button, and CSS Button on Mobile */
+  .view-switch-group {
+    display: none !important;
+  }
+
+  #langToggleBtn,
+  #resetBtn,
+  #copyCssBtn {
+    display: none !important;
+  }
+
+  .header-actions {
+    gap: 0;
+  }
+
+  /* Keep Only Download Button Visible on Mobile */
+  #exportBtn {
+    display: inline-flex !important;
+    padding: 7px 14px;
+    font-size: 0.82rem;
+  }
+}
