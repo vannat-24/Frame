@@ -1836,4 +1836,52 @@ input:checked + .switch-slider:before {
     padding: 7px 14px;
     font-size: 0.82rem;
   }
+
+  /* Mobile Preview & Controls Optimization */
+  .preview-viewport {
+    min-height: 380px;
+    padding: 16px 12px;
+    overflow-x: hidden;
+  }
+
+  .viewport-hud {
+    top: 10px;
+    gap: 6px;
+    max-width: 95%;
+  }
+
+  .hud-item {
+    padding: 4px 10px;
+    font-size: 0.72rem;
+  }
+
+  .frame-stage {
+    max-width: 100%;
+  }
+
+  .frame-container {
+    max-width: 100%;
+  }
+
+  .moulding-outer {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .matboard {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .art-window {
+    max-width: 100%;
+  }
+
+  .controls-sidebar {
+    padding: 16px 12px 40px;
+  }
+
+  .control-section {
+    padding: 14px 12px;
+  }
 }

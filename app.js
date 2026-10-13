@@ -1050,7 +1050,9 @@ function updateLiveRender() {
   root.style.setProperty('--letter-spacing', `${state.letterSpacing}px`);
 
   // 2. Aspect Ratio & Dimensions Calculation
-  const baseDim = 460 * (state.scale / 100);
+  const isMobile = window.innerWidth <= 640;
+  const maxDim = isMobile ? Math.min(270, window.innerWidth - 64) : 460;
+  const baseDim = maxDim * (state.scale / 100);
   let artW = baseDim;
   let artH = baseDim;
 
@@ -1640,3 +1642,12 @@ function showToast(msg) {
 
 // Start application when DOM is ready
 document.addEventListener('DOMContentLoaded', init);
+
+// Responsive window resize handler
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    updateLiveRender();
+  }, 100);
+});
